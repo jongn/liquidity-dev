@@ -4,30 +4,20 @@ import "std.sol";
 
 contract Contract is owned {
   
-    struct Player {
-        address addr;
-        uint256 paid;
-        uint256 profit;
-    }
   
-
-
     uint8[3] row1 = [0,0,0];
     uint8[3] row2 = [0,0,0];
     uint8[3] row3 = [0,0,0];
     uint8[3][3] board = [row1, row2, row3];
-
-
-    Player king;
-    Player players[]
-
+    address player1;
+    address player2;
     bool game_over;
     bool player1_turn;
     address winner;
 
     event GameWon(address winner);
     event Move();
-
+    
 
     function TicTacToe(address _player2){
         //msg , value, sender, gas,
