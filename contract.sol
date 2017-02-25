@@ -3,21 +3,159 @@ pragma solidity ^0.4.0;
 import "std.sol";
 
 contract Contract is owned {
+    
+    enum Stages {
+        GamePlaying,
+        GameStopped,
+        Payout,
+        Overtake
+    }
   
+    struct Player {
+        address addr;
+        uint256 balance;
+        uint256 paid;
+    }
   
+    Player king;
+    Player challenger;
+    Player[] players;
+    uint256 pot;
+    uint256 threshold;
+    Stages stage;
+    
     uint8[3] row1 = [0,0,0];
     uint8[3] row2 = [0,0,0];
     uint8[3] row3 = [0,0,0];
     uint8[3][3] board = [row1, row2, row3];
+    
     address player1;
     address player2;
+    
     bool game_over;
     bool player1_turn;
+    bool private lock;
+    
     address winner;
 
     event GameWon(address winner);
     event Move();
     
+    modifier atStage(Stages _stage) {
+        if (stage != _stage) throw;
+        _;
+    }
+    
+    modifier onlyBy(Player _player)
+    {
+        if (msg.sender != _player.addr)
+            throw;
+        _;
+    }
+    
+    modifier onlyByBoth(Player _king, Player _challenge)
+    {
+        if (msg.sender != _king.addr && msg.sender != _challenge.addr)
+            throw;
+        if (msg.sender == _king.addr && !player1_turn)
+            throw;
+        if (msg.sender == _challenge.addr && player1_turn)
+            throw;
+        _;
+    }
+    
+    modifier costsAtLeast(uint _amount) {
+        if (msg.value < _amount)
+            throw;
+        _;
+    }
+    
+    modifier costsExactly(uint _amount) {
+        if (msg.value < _amount)
+            throw;
+        _;
+        if (msg.value > _amount)
+            msg.sender.send(msg.value - _amount);
+    }
+    
+    function payout() onlyByBoth(king, challenger) {
+
+        if (!lock) {
+            lock = true;
+        
+            address winner = get_winner();
+            uint256 amount = pot;
+            
+            
+            if(winner == king.addr) {
+                stage = Stages.Payout;
+                // king wins
+                // player pays at least 1.1x 
+
+                uint256 winnings = (amount*11)/10;
+                players[0].balance -= winnings;
+                // king leaves, player becomes king
+                king.addr.send(winnings);
+                king = players[0];
+                // set next player
+                
+                // reset game
+                threshold = (pot*11)/10;
+                
+                lock = false;
+            } else if(winner == players[0].addr) {
+                stage = Stages.Payout;
+                // challenger wins
+                
+                king.balance += amount;
+                // have challenger specify amount
+                stage = Stages.Overtake;
+                // set next player
+                // reset game
+                lock = false;
+            } else {
+                // no one won. why are you calling this function??
+                lock = false;
+                throw;
+            }
+        }
+
+
+    }
+    
+    function challengerWin(uint256 amount) onlyBy(challenger) atStage(Stages.Overtake) {
+        // set next player
+        // reset game
+        if (!lock) {
+            if (amount < pot) {
+                lock = false;
+                throw;
+            }
+            if (amount > challenger.balance) {
+                lock = false;
+                throw;
+            }
+            challenger.balance -= amount;
+            pot = amount;
+            threshold = (pot*11)/10;
+            king = challenger;
+            // set next challenger
+            // reset game
+            // state = States.GameStopped;
+        } else {
+            throw;
+        }
+    }
+    
+    /*
+    mapping (address => uint) private userBalances;
+
+    function withdrawBalance() public {
+        uint amountToWithdraw = userBalances[msg.sender];
+        userBalances[msg.sender] = 0;
+        if (!(msg.sender.call.value(amountToWithdraw)())) { throw; } // The user's balance is already 0, so future invocations won't withdraw anything
+    }
+    */
 
     function TicTacToe(address _player2){
         //msg , value, sender, gas,
