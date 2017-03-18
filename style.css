@@ -1,0 +1,26 @@
+html, body {
+    padding: 5px;
+}
+
+#data-table {
+    font-family: calibri, arial;
+    width: 400px;
+}
+
+#data-table thead td {
+    background-color: #8CCCF1;
+}
+
+#tred {
+    background-color: rgba(237, 28, 36, 0.5);
+}
+
+#tyellow {
+    background-color: rgba(242, 191, 39, 0.5);
+}
+
+#data-table td {
+    border: 1px solid #466E85;
+    width: 136px;
+    padding: 7px;
+}
