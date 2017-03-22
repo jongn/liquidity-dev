@@ -1,4 +1,8 @@
 # liquidity-dev
-startbootstrapadmin-2
+bootstrapzero
 
-Place index.html in /pages, morris-data.js in /data, priceTable.css in /dist/css
+Place index.html in gentelella/ and delete the original index.html in production/
+
+dygraph.css in production/css/
+
+dygraph.min.js, graphs.js, jquery-3.1.1.js all in production/js/
