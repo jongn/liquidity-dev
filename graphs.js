@@ -3,24 +3,25 @@ window.onload = function() {
   localStorage.setItem("data", "Time,Coinbase,BitFinex,Bitstamp,Poloniex\n");
 
   var tableData = [
-        { field1: 0, field2: 0, field3: 0, field4: 0 },
-        { field1: 0, field2: 0, field3: 0, field4: 0 },
-        { field1: 0, field2: 0, field3: 0, field4: 0 }
+        { field1: "Coinbase", field2: 0, field3: 0, field4: 0, field5: 0 },
+        { field1: "BitFinex", field2: 0, field3: 0, field4: 0, field5: 0 },
+        { field1: "Bitstamp", field2: 0, field3: 0, field4: 0, field5: 0 },
+        { field1: "Poloniex", field2: 0, field3: 0, field4: 0, field5: 0 }
         ];
             
-  var dt = dynamicTable.config('chart_plot_01');
+  var dt = dynamicTable.config('spread-table',
+                  ['field1', 'field2', 'field3', 'field4', 'field5'], 
+                  ['    ' , 'Coinbase', 'BitFinex', 'Bitstamp', 'Poloniex'], //set to null for field names instead of custom header names
+                  'There are no items to list...');
 
 
    //['field1', 'field2', 'field3', "field4"], 
     //['Coinbase', 'BitFinex', 'Bitstamp', "Poloniex"]
 
   dt.load(tableData);
-
-  var index = 0;
   
   setInterval(function() {
-    index = (index + 1) % 3; 
-    updateData(localStorage.getItem("data"), tableData, index)
+    updateData(localStorage.getItem("data"), tableData)
     }
   , 10000);
 
@@ -48,7 +49,13 @@ var dynamicTable = (function() {
         {
             $.each(names, function(index, name) {
                 var c = item ? item[name+''] : name;
-                row += '<td>' + c + '</td>';
+                if (c > 0) {
+                  row += '<td style="background-color:#f9de0e;">' + c + '</td>';
+                } else if (c < 0) {
+                  row += '<td style="background-color:#e82525;">' + c + '</td>';
+                } else {
+                  row += '<td>' + c + '</td>';
+                }
             });
         }
         row += '<tr>';
@@ -119,7 +126,7 @@ var dynamicTable = (function() {
 }());
 
 
-function updateData(priceData, tableData, index) {
+function updateData(priceData, tableData) {
 
   var coinbase = 'https://api.coinbase.com/v2/exchange-rates?currency=BTC';
   var cb = createCorsRequest('GET', coinbase);
@@ -136,10 +143,45 @@ function updateData(priceData, tableData, index) {
   var bitstampPrice = parseFloat(bitstamp.price);
   var poloniexPrice = parseFloat(poloniex.price);
 
-  tableData[index].field1 = coinbasePrice;
-  tableData[index].field2 = bitfinexPrice;
-  tableData[index].field3 = bitstampPrice;
-  tableData[index].field4 = poloniexPrice;
+  tableData[0].field2 = 100*(coinbasePrice * 0.985 - coinbasePrice * 1.015) 
+                        / (coinbasePrice * 0.985);
+  tableData[0].field3 = 100 * (coinbasePrice * 0.985  - bitfinexPrice * 1.000) 
+                        / (coinbasePrice * 0.985);
+  tableData[0].field4 = 100 * (coinbasePrice * 0.985  - bitstampPrice * 1.0) 
+                        / (coinbasePrice * 0.985);
+  tableData[0].field5 = 100 * (coinbasePrice * 0.985 - poloniexPrice * 1.0) 
+                        / (coinbasePrice * 0.985);
+
+  tableData[1].field2 = 100*(bitfinexPrice * 0.998 - coinbasePrice * 1.015) 
+                        / (bitfinexPrice * 0.998);
+  tableData[1].field3 = 100 * (bitfinexPrice * 0.998  - bitfinexPrice * 1.000) 
+                        / (bitfinexPrice * 0.998);
+  tableData[1].field4 = 100 * (bitfinexPrice * 0.998  - bitstampPrice * 1.0) 
+                        / (bitfinexPrice * 0.998);
+  tableData[1].field5 = 100 * (bitfinexPrice * 0.998 - poloniexPrice * 1.0) 
+                        / (bitfinexPrice * 0.998);
+
+  tableData[2].field2 = 100*(bitstampPrice * 0.9975 - coinbasePrice * 1.015) 
+                        / (bitstampPrice * 0.9975);
+  tableData[2].field3 = 100 * (bitstampPrice * 0.9975  - bitfinexPrice * 1.000) 
+                        / (bitstampPrice * 0.9975);
+  tableData[2].field4 = 100 * (bitstampPrice * 0.9975  - bitstampPrice * 1.0) 
+                        / (bitstampPrice * 0.9975);
+  tableData[2].field5 = 100 * (bitstampPrice * 0.9975 - poloniexPrice * 1.0) 
+                        / (bitstampPrice * 0.9975);
+
+  tableData[3].field2 = 100* (poloniexPrice * 0.9975 - coinbasePrice * 1.015) 
+                        / (poloniexPrice * 0.9975);
+  tableData[3].field3 = 100 * (poloniexPrice * 0.9975  - bitfinexPrice * 1.000) 
+                        / (poloniexPrice * 0.9975);
+  tableData[3].field4 = 100 * (poloniexPrice * 0.9975  - bitstampPrice * 1.0) 
+                        / (poloniexPrice * 0.9975);
+  tableData[3].field5 = 100 * (poloniexPrice * 0.9975 - poloniexPrice * 1.0) 
+                        / (poloniexPrice * 0.9975);
+
+  updateTopPrices(coinbasePrice, bitfinexPrice, bitstampPrice, poloniexPrice);
+
+  //updateTopVolumes(bitfinex.volume, bitstamp.volume, poloniex.volume);
 
 
   localStorage.setItem("data", priceData + "\n" + 
@@ -148,16 +190,30 @@ function updateData(priceData, tableData, index) {
 
 }
 
+function updateTopPrices(cb, bf, bs, pn) {
+  document.getElementById("cbprice").innerHTML = cb.toFixed(2);
+  document.getElementById("bfprice").innerHTML = bf.toFixed(2);
+  document.getElementById("bsprice").innerHTML = bs.toFixed(2);
+  document.getElementById("pnprice").innerHTML = pn.toFixed(2);
+}
+
+function updateTopVolumes(bf, bs, pn) {
+  //document.getElementById("cbvolume").innerHTML = cb.toFixed(2);
+  document.getElementById("bfvolume").innerHTML = bf;
+  document.getElementById("bsvolume").innerHTML = bs;
+  document.getElementById("pnvolume").innerHTML = pn;
+}
+
 function updateGraph(data) {
   var cgraph = new Dygraph(
       document.getElementById("chart_plot_01"), data,
       {
         //drawPoints: true,
-        width: 1000,
-        height: 320,
-        axisLabelFontSize: 16,  
-        axisLineWidth: 1.7,
-        xlabel: "Time",
+        width: 960,
+        height: 350,
+        axisLabelFontSize: 18,  
+        axisLineWidth: 6,
+        //xlabel: "Time",
         //ylabel: "$/BTC",
         fillGraph: true,
         strokeWidth: 3,
