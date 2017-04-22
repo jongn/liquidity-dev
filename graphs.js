@@ -1,6 +1,10 @@
 window.onload = function() {
 
   localStorage.setItem("data", "Time,Coinbase,BitFinex,Bitstamp,Poloniex\n");
+  localStorage.setItem("ethData", "Time,Coinbase,BitFinex,Kraken,Poloniex\n");
+
+  topPricesBTC = [0, 0, 0, 0];
+  topPricesETH = [0, 0, 0, 0];
 
   var tableData = [
         { field1: "Coinbase", field2: 0, field3: 0, field4: 0, field5: 0 },
@@ -19,11 +23,18 @@ window.onload = function() {
     //['Coinbase', 'BitFinex', 'Bitstamp', "Poloniex"]
 
   dt.load(tableData);
+
+  topShowBTC = true;
   
   setInterval(function() {
     updateData(localStorage.getItem("data"), tableData)
     }
-  , 10000);
+  , 5000);
+
+  setInterval(function() {
+    updateEthData(localStorage.getItem("ethData"))
+    }
+  , 5000);
 
   setInterval(function() {
     updateGraph(localStorage.getItem("data"));
@@ -134,6 +145,8 @@ function updateData(priceData, tableData) {
   var cryptonator = 'https://api.cryptonator.com/api/full/btc-usd';
   var ctt = createCorsRequest('GET', cryptonator);
 
+  console.log(ctt);
+
   var poloniex = ctt.ticker.markets[13];
   var bitfinex = ctt.ticker.markets[0];
   var bitstamp = ctt.ticker.markets[1];
@@ -142,6 +155,12 @@ function updateData(priceData, tableData) {
   var bitfinexPrice = parseFloat(bitfinex.price);
   var bitstampPrice = parseFloat(bitstamp.price);
   var poloniexPrice = parseFloat(poloniex.price);
+
+  topPricesBTC[0] = coinbasePrice;
+  topPricesBTC[1] = bitfinexPrice;
+  topPricesBTC[2] = bitstampPrice;
+  topPricesBTC[3] = poloniexPrice;
+
 
   tableData[0].field2 = 100*(coinbasePrice * 0.985 - coinbasePrice * 1.015) 
                         / (coinbasePrice * 0.985);
@@ -179,7 +198,9 @@ function updateData(priceData, tableData) {
   tableData[3].field5 = 100 * (poloniexPrice * 0.9975 - poloniexPrice * 1.0) 
                         / (poloniexPrice * 0.9975);
 
-  updateTopPrices(coinbasePrice, bitfinexPrice, bitstampPrice, poloniexPrice);
+  if (topShowBTC) {
+      updateTopPrices(coinbasePrice, bitfinexPrice, bitstampPrice, poloniexPrice);
+  }
 
   //updateTopVolumes(bitfinex.volume, bitstamp.volume, poloniex.volume);
 
@@ -187,6 +208,41 @@ function updateData(priceData, tableData) {
   localStorage.setItem("data", priceData + "\n" + 
     new Date() + "," + coinbasePrice + "," + bitfinexPrice +
     "," + bitstampPrice + "," + poloniexPrice);
+
+}
+
+function updateEthData(priceData) {
+
+  var coinbase = 'https://api.coinbase.com/v2/exchange-rates?currency=ETH';
+  var cb = createCorsRequest('GET', coinbase);
+
+  var cryptonator = 'https://api.cryptonator.com/api/full/eth-usd';
+  var ctt = createCorsRequest('GET', cryptonator);
+  console.log(cb);
+
+  var poloniex = ctt.ticker.markets[6];
+  var bitfinex = ctt.ticker.markets[0];
+  var kraken = ctt.ticker.markets[4];
+
+  var coinbasePrice = parseFloat(cb.data.rates.USD);
+  var bitfinexPrice = parseFloat(bitfinex.price);
+  var krakenPrice = parseFloat(kraken.price);
+  var poloniexPrice = parseFloat(poloniex.price);
+
+  topPricesETH[0] = coinbasePrice;
+  topPricesETH[1] = bitfinexPrice;
+  topPricesETH[2] = krakenPrice;
+  topPricesETH[3] = poloniexPrice;
+
+  if (!topShowBTC) {
+      updateTopPrices(coinbasePrice, bitfinexPrice, krakenPrice, poloniexPrice);
+  }
+
+  //updateTopVolumes(bitfinex.volume, bitstamp.volume, poloniex.volume);
+
+  localStorage.setItem("ethData", priceData + "\n" + 
+    new Date() + "," + coinbasePrice + "," + bitfinexPrice +
+    "," + krakenPrice + "," + poloniexPrice);
 
 }
 
@@ -211,6 +267,7 @@ function updateGraph(data) {
         //drawPoints: true,
         width: 960,
         height: 350,
+        //panEdgeFraction: 0.7,
         axisLabelFontSize: 18,  
         axisLineWidth: 6,
         //xlabel: "Time",
@@ -242,9 +299,70 @@ function createCorsRequest(method, url) {
         xhr = new XDomainRequest();
         xhr.open(method, url);
 
-    } else {
-      console.log("supported");
+      } else {
+        console.log("supported");
         xhr = null;
-    }
-    return xhr;
+      }
+      return xhr;
 }
+
+function btcToggle() {
+    //document.getElementById("myDropdown").classList.toggle("show");
+    topShowBTC = true;
+    document.getElementById("switchMarket").innerHTML = "Bitstamp";
+    updateTopPrices(topPricesBTC[0], topPricesBTC[1], 
+                        topPricesBTC[2], topPricesBTC[3]);
+    updateGraph(localStorage.getItem("data"));
+    console.log("btcToggle called");
+}
+
+function ethToggle() {
+    //document.getElementById("myDropdown").classList.toggle("show");
+    topShowBTC = false;
+    document.getElementById("switchMarket").innerHTML = "Kraken";
+    updateTopPrices(topPricesETH[0], topPricesETH[1], 
+                        topPricesETH[2], topPricesETH[3]);
+    updateGraph(localStorage.getItem("ethData"));
+    console.log("ethToggle called");
+
+    $.ajax({
+      url: "../../test.py",
+      success: function(response) {
+        console.log("success");
+        console.log(response);
+    }
+});
+}
+
+function showftbtn() {
+  if (document.getElementById('ftcontent').style.display == "none") {
+      document.getElementById('ftcontent').style.display = "block";
+  } else {
+      document.getElementById('ftcontent').style.display = "none";
+  }
+}
+
+function showsnbtn() {
+  if (document.getElementById('sncontent').style.display == "none") {
+      document.getElementById('sncontent').style.display = "block";
+  } else {
+      document.getElementById('sncontent').style.display = "none";
+  }}
+
+
+// Close the dropdown menu if the user clicks outside of it
+/*
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    console.log("window onclick");
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+*/

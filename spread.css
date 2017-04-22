@@ -1,0 +1,44 @@
+#spread-table[role="stupidbug"] {
+    font-family: calibri, arial;
+    width: 400px;
+        background-color: #000000;
+
+}
+
+#spread-table thead td {
+    background-color: #8CCCF1;
+}
+
+#spread-table td {
+    border: 1px solid #466E85;
+    width: 400px;
+    padding: 7px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+#tyellow {
+	background-color: rgba(242, 191, 39, 0.5);
+}
+
+.stupidbug {
+	border: 1px solid #466E85;
+    width: 400px;
+    padding: 7px;
+    background-color: #000000;
+}
+
+iframe {
+	padding-top: 20px;
+}
+
+#chart_plot_01 { 
+    position: absolute; 
+    left: 200px; 
+    right: 10px; 
+    top: 100px; 
+    bottom: 10px; 
+}
+.dropbtn:hover {
+    background-color: #99bcd8
+}
