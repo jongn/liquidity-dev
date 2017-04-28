@@ -49,14 +49,18 @@
       padding:14px;
       padding-left:20px;
       border: none;
+      box-shadow: 0px 8px 9px 0px rgba(0,0,0,0.2);
     }
     .seconddropdown {
       float:left;
       padding-left:40px;
+      padding-top:23px;
       cursor:pointer;
     }
     .firstdropdown {
       float:left;
+      padding-top:23px;
+      padding-left:15px;
     }
     .dropdown-content {
       position: absolute;
@@ -66,16 +70,101 @@
       z-index: 1;
     }
     .dropdown-content a {
+      font-size:15px;
       color: black;
       padding: 12px 16px;
       text-decoration: none;
       display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #ede8e8;
+    }
+    .userinput {
+      padding-left:90px;
+      float:left;
+    }
+    #calculate {
+      float:right;
+      padding-right:29.5%;
+      padding-top:3px;
+    }
+    #calculatebtn {
+      background-color:#565252;
+      color: #FFFFFF;
+      box-shadow: 2px 8px 16px 8px rgba(0,0,0,0.2);
+      border:none;
+      font-size:20px;
+    }
+    #calculatebtn:hover {
+      background-color:#877c7c;
+    }
+    #calresult {
+      padding-left:19px;
+      display:none;
     }
     </style>
 
   </head>
 
   <body class="nav-md">
+    <script>
+
+      function calculate() {
+        for (i = 1; i <= 4; i++) {
+          document.getElementById("point"+i).style.display = "none";
+        }
+        var link = "http://localhost:8080/"
+        var xhr = new XMLHttpRequest();
+        if ("withCredentials" in xhr) {
+          console.log("withCredentials");
+          xhr.open("GET", link, false);
+          xhr.send();
+          document.getElementById("calresult").style.display = "block";
+          if (xhr.readyState == 4 && xhr.status == 200) {
+                var res = xhr.response.split(", ");
+                var i = 1;
+                while (i <= res.length) {
+                  document.getElementById("point"+i).innerHTML = res[i - 1];
+                  document.getElementById("point"+i).style.display = "block";
+                  i++;
+                }
+                while (i <= 4) {
+                  var k = i - 1;
+                  document.getElementById("circle"+i).style.display = "none";
+                  document.getElementById("arrow"+k).style.display = "none";
+                  document.getElementById("line"+k).style.display = "none";
+                  i++;
+                }
+                
+          }
+        }
+      }
+
+      function showftbtn() {
+        if (document.getElementById('ftcontent').style.display == "none") {
+            document.getElementById('ftcontent').style.display = "block";
+        } else {
+            document.getElementById('ftcontent').style.display = "none";
+        }
+      }
+
+      function showsnbtn() {
+        if (document.getElementById('sncontent').style.display == "none") {
+            document.getElementById('sncontent').style.display = "block";
+        } else {
+            document.getElementById('sncontent').style.display = "none";
+        }}
+
+      function changeFirstUserInput(html) {
+        document.getElementById("firstInput").innerHTML = html;
+        document.getElementById("ftcontent").style.display = "none";
+      }
+
+      function changeSecondUserInput(html) {
+        document.getElementById("secondInput").innerHTML = html;
+        document.getElementById("sncontent").style.display = "none";
+      }
+    </script>
     <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col">
@@ -259,7 +348,7 @@
               <span class="count_bottom"><i class="green" id="cbvolume"></i></span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user" class="bitfinex"></i>BitFinex</span>
+              <span class="count_top"><i class="fa fa-user" class="bitfinex"></i>云币 (Yunbi)</span>
               <div class="count" id="bfprice"></div>
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i id="bfvolume"></i></span>
             </div>
@@ -269,7 +358,7 @@
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i id="bsvolume"></i></span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user" class="poloniex"></i>Poloniex</span>
+              <span class="count_top"><i class="fa fa-user" class="poloniex"></i>Kraken</span>
               <div class="count" id="pnprice"></div>
               <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i id="pnvolume"></i></span>
             </div>
@@ -572,46 +661,90 @@
 
           <br><br><br><br>
 
-          <h1>Supported currency: USD, EUR, JPY, BTC.</h1>
+          <h1>Supported currency: USD, ETH, EUR, JPY, BTC.</h1>
           <!--style="background-color:#a6eefc;color:##190d0d; font-size:20px;padding:14px;padding-left:20px;border: none;"-->
 
           <div class="firstdropdown">
-            <button class="dropbtn" id="ftbtn" onclick="showftbtn()">First Currency</button>
-            <div class="dropdown-content" id="ftcontent" style="display:none;">
-              <a href="#">BTC</a>
-              <a href="#">ETH</a>
-              <a href="#">USD</a>
-              <a href="#">CNY</a>
-              <a href="#">EUR</a>
+            <button class="dropbtn" id="ftbtn" onclick="showftbtn()">Start Currency</button>
+            <div class="dropdown-content" id="ftcontent" style="display:none;cursor:pointer;">
+              <a onclick="changeFirstUserInput(this.innerHTML)">BTC</a>
+              <a onclick="changeFirstUserInput(this.innerHTML)">ETH</a>
+              <a onclick="changeFirstUserInput(this.innerHTML)">USD</a>
+              <a onclick="changeFirstUserInput(this.innerHTML)">CNY</a>
+              <a onclick="changeFirstUserInput(this.innerHTML)">EUR</a>
             </div>
           </div>
           <div class="seconddropdown">
-            <button class="dropbtn" id="snbtn" onclick="showsnbtn()">Second Currency</button>
-            <div class="dropdown-content" id="sncontent" style="display:none;">
-              <a href="#">BTC</a>
-              <a href="#">ETH</a>
-              <a href="#">USD</a>
-              <a href="#">CNY</a>
-              <a href="#">EUR</a>
+            <button class="dropbtn" id="snbtn" onclick="showsnbtn()">End Currency</button>
+            <div class="dropdown-content" id="sncontent" style="display:none;cursor:pointer;">
+              <a onclick="changeSecondUserInput(this.innerHTML)">BTC</a>
+              <a onclick="changeSecondUserInput(this.innerHTML)">ETH</a>
+              <a onclick="changeSecondUserInput(this.innerHTML)">USD</a>
+              <a onclick="changeSecondUserInput(this.innerHTML)">CNY</a>
+              <a onclick="changeSecondUserInput(this.innerHTML)">EUR</a>
             </div>
           </div>
 
-          <svg height="100" width="100">
-            <g id="UrTavla">
-              <circle cx="60" cy="50" r="40" stroke="black" stroke-width="3" fill="blue">BTC</circle>
-              <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="2px" dy=".3em">BTC</text>
-            </g>
+          <svg height="120" width="500" class="userinput">
+            <circle cx="60" cy="60" r="58" stroke="black" stroke-width="3" fill="#565252" border="none"></circle>
+            <text x="60" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#d8c3c3" id="firstInput">BTC</text>
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
+              </marker>
+            </defs>
+            <line x1="120" y1="60" x2="190" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
+            <circle cx="290" cy="60" r="58" stroke="black" stroke-width="3" fill="#565252" border="none"></circle>
+            <text x="290" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#d8c3c3" id="secondInput">ETH</text>
           </svg>
 
-          <br><br><br><br><br><br><br><br><br><br><br><br>
+          <br><br><br>
 
-          <!--
+          <div id="calculate">
+            <button id="calculatebtn" style="display:block;clear:both;" onclick="calculate()">Calculate</button>
+          </div>
+
+          <br><br><br><br><br><br><br><br><br>
+
+          <svg height="120" width="1000" id="calresult">
+            <circle cx="60" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle1"></circle>
+            <text x="60" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point1"></text>
+            <defs id="arrow1">
+              <marker markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
+              </marker>
+            </defs>
+            <line id="line1" x1="120" y1="60" x2="190" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
+            <circle cx="290" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle2"></circle>
+            <text x="290" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point2"></text>
+
+            <defs id="arrow2">
+              <marker markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
+              </marker>
+            </defs>
+            <line id="line2" x1="350" y1="60" x2="430" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
+
+            <circle cx="530" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle3"></circle>
+            <text x="530" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point3"></text>
+            <defs id="arrow3">
+              <marker markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
+              </marker>
+            </defs>
+            <line id="line3" x1="590" y1="60" x2="660" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
+            <circle cx="760" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle4"></circle>
+            <text x="760" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point4"></text>
+          </svg>
+
+          <br><br><br><br><br><br><br><br><br><br>
+          
           <iframe src="https://docs.google.com/presentation/d/1_YVi5zXWPOI2fBHsrUigsrm1xs_otmOinTRZQSlWnys/embed?start=false&loop=false&delayms=60000" frameborder="0" width="100%" height="839" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
 
           <br><br><br><br>
 
           <iframe src="https://docs.google.com/presentation/d/1WjaQegu8ZTX0_3-RA1wKJWYL3tbT6dLUt-T_EhaOxU8/embed?start=false&loop=false&delayms=3000" frameborder="0" width="100%" height="839" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-          -->
+          
 
           <!--
           <div class="row">

@@ -26,6 +26,7 @@ window.onload = function() {
 
   topShowBTC = true;
   
+  
   setInterval(function() {
     updateData(localStorage.getItem("data"), tableData)
     }
@@ -41,7 +42,7 @@ window.onload = function() {
     dt.load(tableData);
     }
     , 20000);
-
+  
 }
 
 
@@ -145,69 +146,74 @@ function updateData(priceData, tableData) {
   var cryptonator = 'https://api.cryptonator.com/api/full/btc-usd';
   var ctt = createCorsRequest('GET', cryptonator);
 
-  console.log(ctt);
+  var yunbi = "https://yunbi.com/api/v2/order_book.json?market=btccny&asks_limit=1&bids_limit=1";
+  var yb = createCorsRequest('GET', yunbi);
+  //console.log(yb);
+  // var gdax = "https://api.gdax.com";
+  // var gd = createCorsRequest('GET', gdax);
+  // console.log(gd);
 
-  var poloniex = ctt.ticker.markets[13];
-  var bitfinex = ctt.ticker.markets[0];
+  var kraken = ctt.ticker.markets[8];
+  var btccny = yb.asks[0];
   var bitstamp = ctt.ticker.markets[1];
 
   var coinbasePrice = parseFloat(cb.data.rates.USD);
-  var bitfinexPrice = parseFloat(bitfinex.price);
+  var btccnyPrice = parseFloat(btccny.price) / 6.89;
   var bitstampPrice = parseFloat(bitstamp.price);
-  var poloniexPrice = parseFloat(poloniex.price);
+  var krakenPrice = parseFloat(kraken.price);
 
   topPricesBTC[0] = coinbasePrice;
-  topPricesBTC[1] = bitfinexPrice;
+  topPricesBTC[1] = btccnyPrice;
   topPricesBTC[2] = bitstampPrice;
-  topPricesBTC[3] = poloniexPrice;
+  topPricesBTC[3] = krakenPrice;
 
 
   tableData[0].field2 = 100*(coinbasePrice * 0.985 - coinbasePrice * 1.015) 
                         / (coinbasePrice * 0.985);
-  tableData[0].field3 = 100 * (coinbasePrice * 0.985  - bitfinexPrice * 1.000) 
+  tableData[0].field3 = 100 * (coinbasePrice * 0.985  - btccnyPrice * 1.000) 
                         / (coinbasePrice * 0.985);
   tableData[0].field4 = 100 * (coinbasePrice * 0.985  - bitstampPrice * 1.0) 
                         / (coinbasePrice * 0.985);
-  tableData[0].field5 = 100 * (coinbasePrice * 0.985 - poloniexPrice * 1.0) 
+  tableData[0].field5 = 100 * (coinbasePrice * 0.985 - krakenPrice * 1.0) 
                         / (coinbasePrice * 0.985);
 
-  tableData[1].field2 = 100*(bitfinexPrice * 0.998 - coinbasePrice * 1.015) 
-                        / (bitfinexPrice * 0.998);
-  tableData[1].field3 = 100 * (bitfinexPrice * 0.998  - bitfinexPrice * 1.000) 
-                        / (bitfinexPrice * 0.998);
-  tableData[1].field4 = 100 * (bitfinexPrice * 0.998  - bitstampPrice * 1.0) 
-                        / (bitfinexPrice * 0.998);
-  tableData[1].field5 = 100 * (bitfinexPrice * 0.998 - poloniexPrice * 1.0) 
-                        / (bitfinexPrice * 0.998);
+  tableData[1].field2 = 100*(btccnyPrice * 0.998 - coinbasePrice * 1.015) 
+                        / (btccnyPrice * 0.998);
+  tableData[1].field3 = 100 * (btccnyPrice * 0.998  - btccnyPrice * 1.000) 
+                        / (btccnyPrice * 0.998);
+  tableData[1].field4 = 100 * (btccnyPrice * 0.998  - bitstampPrice * 1.0) 
+                        / (btccnyPrice * 0.998);
+  tableData[1].field5 = 100 * (btccnyPrice * 0.998 - krakenPrice * 1.0) 
+                        / (btccnyPrice * 0.998);
 
   tableData[2].field2 = 100*(bitstampPrice * 0.9975 - coinbasePrice * 1.015) 
                         / (bitstampPrice * 0.9975);
-  tableData[2].field3 = 100 * (bitstampPrice * 0.9975  - bitfinexPrice * 1.000) 
+  tableData[2].field3 = 100 * (bitstampPrice * 0.9975  - btccnyPrice * 1.000) 
                         / (bitstampPrice * 0.9975);
   tableData[2].field4 = 100 * (bitstampPrice * 0.9975  - bitstampPrice * 1.0) 
                         / (bitstampPrice * 0.9975);
-  tableData[2].field5 = 100 * (bitstampPrice * 0.9975 - poloniexPrice * 1.0) 
+  tableData[2].field5 = 100 * (bitstampPrice * 0.9975 - krakenPrice * 1.0) 
                         / (bitstampPrice * 0.9975);
 
-  tableData[3].field2 = 100* (poloniexPrice * 0.9975 - coinbasePrice * 1.015) 
-                        / (poloniexPrice * 0.9975);
-  tableData[3].field3 = 100 * (poloniexPrice * 0.9975  - bitfinexPrice * 1.000) 
-                        / (poloniexPrice * 0.9975);
-  tableData[3].field4 = 100 * (poloniexPrice * 0.9975  - bitstampPrice * 1.0) 
-                        / (poloniexPrice * 0.9975);
-  tableData[3].field5 = 100 * (poloniexPrice * 0.9975 - poloniexPrice * 1.0) 
-                        / (poloniexPrice * 0.9975);
+  tableData[3].field2 = 100* (krakenPrice * 0.9975 - coinbasePrice * 1.015) 
+                        / (krakenPrice * 0.9975);
+  tableData[3].field3 = 100 * (krakenPrice * 0.9975  - btccnyPrice * 1.000) 
+                        / (krakenPrice * 0.9975);
+  tableData[3].field4 = 100 * (krakenPrice * 0.9975  - bitstampPrice * 1.0) 
+                        / (krakenPrice * 0.9975);
+  tableData[3].field5 = 100 * (krakenPrice * 0.9975 - krakenPrice * 1.0) 
+                        / (krakenPrice * 0.9975);
 
   if (topShowBTC) {
-      updateTopPrices(coinbasePrice, bitfinexPrice, bitstampPrice, poloniexPrice);
+      updateTopPrices(coinbasePrice, btccnyPrice, bitstampPrice, krakenPrice);
   }
 
   //updateTopVolumes(bitfinex.volume, bitstamp.volume, poloniex.volume);
 
 
   localStorage.setItem("data", priceData + "\n" + 
-    new Date() + "," + coinbasePrice + "," + bitfinexPrice +
-    "," + bitstampPrice + "," + poloniexPrice);
+    new Date() + "," + coinbasePrice + "," + btccnyPrice +
+    "," + bitstampPrice + "," + krakenPrice);
 
 }
 
@@ -218,7 +224,7 @@ function updateEthData(priceData) {
 
   var cryptonator = 'https://api.cryptonator.com/api/full/eth-usd';
   var ctt = createCorsRequest('GET', cryptonator);
-  console.log(cb);
+  //console.log(cb);
 
   var poloniex = ctt.ticker.markets[6];
   var bitfinex = ctt.ticker.markets[0];
@@ -313,7 +319,6 @@ function btcToggle() {
     updateTopPrices(topPricesBTC[0], topPricesBTC[1], 
                         topPricesBTC[2], topPricesBTC[3]);
     updateGraph(localStorage.getItem("data"));
-    console.log("btcToggle called");
 }
 
 function ethToggle() {
@@ -323,46 +328,15 @@ function ethToggle() {
     updateTopPrices(topPricesETH[0], topPricesETH[1], 
                         topPricesETH[2], topPricesETH[3]);
     updateGraph(localStorage.getItem("ethData"));
-    console.log("ethToggle called");
-
-    $.ajax({
-      url: "../../test.py",
-      success: function(response) {
-        console.log("success");
-        console.log(response);
-    }
-});
 }
 
-function showftbtn() {
-  if (document.getElementById('ftcontent').style.display == "none") {
-      document.getElementById('ftcontent').style.display = "block";
-  } else {
-      document.getElementById('ftcontent').style.display = "none";
-  }
-}
-
-function showsnbtn() {
-  if (document.getElementById('sncontent').style.display == "none") {
-      document.getElementById('sncontent').style.display = "block";
-  } else {
-      document.getElementById('sncontent').style.display = "none";
-  }}
-
-
-// Close the dropdown menu if the user clicks outside of it
-/*
 window.onclick = function(event) {
   if (!event.target.matches('.dropbtn')) {
-    console.log("window onclick");
     var dropdowns = document.getElementsByClassName("dropdown-content");
     var i;
     for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
+      dropdowns[i].style.display = "none";
     }
   }
 }
-*/
+
