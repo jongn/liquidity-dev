@@ -38,13 +38,13 @@
 
     <script src="./production/js/jquery-3.1.1.js" type="text/javascript"></script>
 
-    <style type="text/css"> 
+    <style type="text/css">
     .dropbtn:hover {
       background-color: #7ba9b5;
     }
     .dropbtn {
       background-color:#446770;
-      color:#eaeeef; 
+      color:#eaeeef;
       font-size:20px;
       padding:14px;
       padding-left:20px;
@@ -102,6 +102,117 @@
       padding-left:19px;
       display:none;
     }
+    div.table-title {
+       display: block;
+      margin: auto;
+      max-width: 600px;
+      padding:5px;
+      width: 100%;
+    }
+    .table-title h3 {
+       color: #fafafa;
+       font-size: 30px;
+       font-weight: 400;
+       font-style:normal;
+       font-family: "Roboto", helvetica, arial, sans-serif;
+       text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+       text-transform:uppercase;
+    }
+    /*** Table Styles **/
+    .table-fill {
+      background: white;
+      border-radius:3px;
+      border-collapse: collapse;
+      height: 320px;
+      margin: auto;
+      max-width: 600px;
+      padding:5px;
+      width: 100%;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      animation: float 5s infinite;
+    }
+    th {
+      color:#D5DDE5;;
+      background:#1b1e24;
+      border-bottom:4px solid #9ea7af;
+      border-right: 1px solid #343a45;
+      font-size:23px;
+      font-weight: 100;
+      padding:24px;
+      text-align:left;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      vertical-align:middle;
+    }
+    th:first-child {
+      border-top-left-radius:3px;
+    }
+    th:last-child {
+      border-top-right-radius:3px;
+      border-right:none;
+    }
+    tr {
+      border-top: 1px solid #C1C3D1;
+      border-bottom-: 1px solid #C1C3D1;
+      color:#666B85;
+      font-size:16px;
+      font-weight:normal;
+      text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+    }
+    tr:hover td {
+      background:#4E5066;
+      color:#FFFFFF;
+      border-top: 1px solid #22262e;
+      border-bottom: 1px solid #22262e;
+    }
+    tr:first-child {
+      border-top:none;
+    }
+    tr:last-child {
+      border-bottom:none;
+    }
+    tr:nth-child(odd) td {
+      background:#EBEBEB;
+    }
+    tr:nth-child(odd):hover td {
+      background:#4E5066;
+    }
+    tr:last-child td:first-child {
+      border-bottom-left-radius:3px;
+    }
+    tr:last-child td:last-child {
+      border-bottom-right-radius:3px;
+    }
+    td {
+      background:#FFFFFF;
+      padding:20px;
+      text-align:left;
+      vertical-align:middle;
+      font-weight:300;
+      font-size:18px;
+      text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+      border-right: 1px solid #C1C3D1;
+    }
+    td:last-child {
+      border-right: 0px;
+    }
+    th.text-left {
+      text-align: left;
+    }
+    th.text-center {
+      text-align: center;
+    }
+    th.text-right {
+      text-align: right;
+    }
+    td.text-left {
+      text-align: left;
+    }
+    td.text-center {
+      text-align: center;
+    }
+    td.text-right {
+      text-align: right;
+    }
     </style>
 
   </head>
@@ -128,8 +239,23 @@
                   document.getElementById("point"+i).style.display = "block";
                   i++;
                 }
+
+                document.getElementById("firstInput_sub").innerHTML = "$1000.00"
+                document.getElementById("secondInput_sub").innerHTML = "0.918 ($1000.00)"
+                document.getElementById("exchangeInput_sub").innerHTML = "Yunbi"
+
+
+                document.getElementById("point1_sub").innerHTML = "$1000.00"
+                document.getElementById("point2_sub").innerHTML = "0.918 ($1000.00)"
+                document.getElementById("point3_sub").innerHTML = "0.918 ($1073.00)"
+                document.getElementById("point4").innerHTML = "Profit: $73.00"
+                document.getElementById("point4").style.display = "block";
+                
+                document.getElementById("line1_sub").innerHTML = "Yunbi"
+                document.getElementById("line2_sub").innerHTML = "Poloniex"
+
                 while (i <= 4) {
-                  var k = i - 1;
+                  var k = i;
                   document.getElementById("circle"+i).style.display = "none";
                   document.getElementById("arrow"+k).style.display = "none";
                   document.getElementById("line"+k).style.display = "none";
@@ -688,14 +814,17 @@
           <svg height="120" width="500" class="userinput">
             <circle cx="60" cy="60" r="58" stroke="black" stroke-width="3" fill="#565252" border="none"></circle>
             <text x="60" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#d8c3c3" id="firstInput">BTC</text>
+            <text x="60" y="85" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="12.5px" fill="#000000" id="firstInput_sub"></text>
             <defs>
               <marker id="arrow" markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
                 <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
               </marker>
             </defs>
             <line x1="120" y1="60" x2="190" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
+            <text x="170" y="85" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="13px" fill="#000000" id="exchangeInput_sub"></text>
             <circle cx="290" cy="60" r="58" stroke="black" stroke-width="3" fill="#565252" border="none"></circle>
             <text x="290" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#d8c3c3" id="secondInput">ETH</text>
+            <text x="290" y="85" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="12.5px" fill="#000000" id="secondInput_sub"></text>
           </svg>
 
           <br><br><br>
@@ -709,15 +838,21 @@
           <svg height="120" width="1000" id="calresult">
             <circle cx="60" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle1"></circle>
             <text x="60" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point1"></text>
+            <text x="60" y="85" text-anchor="middle" stroke="#000000" stroke-width="1px" dy=".3em" font-size="12.5px" fill="#233638" id="point1_sub"></text>
+
             <defs id="arrow1">
               <marker markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
                 <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
               </marker>
             </defs>
             <line id="line1" x1="120" y1="60" x2="190" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
+
+            <text x="170" y="85" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="15px" fill="#233638" id="line1_sub"></text>
+
             <circle cx="290" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle2"></circle>
             <text x="290" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point2"></text>
-
+            <text x="290" y="85" text-anchor="middle" stroke="#000000" stroke-width="1px" dy=".3em" font-size="12.5px" fill="#233638" id="point2_sub"></text>
+            
             <defs id="arrow2">
               <marker markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
                 <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
@@ -725,8 +860,13 @@
             </defs>
             <line id="line2" x1="350" y1="60" x2="430" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
 
+            <text x="400" y="85" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="15px" fill="#233638" id="line2_sub"></text>
+
             <circle cx="530" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle3"></circle>
             <text x="530" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point3"></text>
+            <text x="530" y="85" text-anchor="middle" stroke="#000000" stroke-width="1px" dy=".3em" font-size="12.5px" fill="#233638" id="point3_sub"></text>
+            
+
             <defs id="arrow3">
               <marker markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
                 <path d="M0,0 L0,6 L9,3 z" fill="#000000"/>
@@ -734,7 +874,9 @@
             </defs>
             <line id="line3" x1="590" y1="60" x2="660" y2="60" stroke="#000" stroke-width="5" marker-end="url(#arrow)"/>
             <circle cx="760" cy="60" r="58" stroke="black" stroke-width="3" fill="#84d3d8" border="none" id="circle4"></circle>
-            <text x="760" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point4"></text>
+            <text x="790" y="60" text-anchor="middle" stroke="#51c5cf" stroke-width="1px" dy=".3em" font-size="30px" fill="#233638" id="point4"></text>
+
+
           </svg>
 
           <br><br><br><br><br><br><br><br><br><br>
